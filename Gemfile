@@ -29,6 +29,10 @@ group :kitchen_ec2 do
   gem 'kitchen-ec2'
 end
 
+group :kitchen_docker do
+  gem 'kitchen-dokken'
+end
+
 group :development do
   gem 'growl'
   gem 'guard'
