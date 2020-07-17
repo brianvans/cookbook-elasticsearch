@@ -9,14 +9,24 @@ sudo: false
 rvm:
   - 2.5.7
 
-install: bundle install --jobs=3 --retry=3 --without kitchen_vagrant kitchen_rackspace kitchen_ec2 development
+install: >-
+  bundle install
+  --jobs=3
+  --retry=3
+  --without
+  development
+  kitchen_ec2
+  kitchen_rackspace
+  kitchen_vagrant
+
 cache:
   directories:
-  - vendor/bundle
+    - vendor/bundle
 
 script:
   - bundle exec rake style
   - bundle exec rake spec
+  - KITCHEN_LOCAL_YAML=.kitchen.dokken.yml bundle exec kitchen verify
 
 notifications:
   disable: true
