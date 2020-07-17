@@ -1,0 +1,91 @@
+---
+driver:
+  name: dokken
+  privileged: true
+  chef_version: 14
+  volumes:
+  - /sys/fs/cgroup:/sys/fs/cgroup:ro
+
+transport:
+  name: dokken
+
+provisioner:
+  name: dokken
+  attributes:
+    java:
+      jdk_version: '8'
+  run_list:
+    - recipe[apt]
+    - recipe[curl]
+    - recipe[java]
+
+verifier:
+  root_path: '/opt/verifier'
+  sudo: false
+
+platforms:
+  - name: ubuntu-18.04
+    driver:
+      image: dokken/ubuntu-18.04
+      pid_one_command: /bin/systemd
+  - name: ubuntu-16.04
+    driver:
+      image: dokken/ubuntu-16.04
+      pid_one_command: /bin/systemd
+  - name: ubuntu-14.04
+    driver:
+      image: dokken/ubuntu-14.04
+  - name: centos-8
+    driver:
+      image: centos:8
+      pid_one_command: /usr/lib/systemd/systemd
+      platform: rhel
+  - name: centos-7
+    driver:
+      image: centos:7
+      pid_one_command: /usr/lib/systemd/systemd
+      platform: rhel
+  - name: centos-6
+    driver:
+      image: centos:6
+      platform: rhel
+      intermediate_instructions:
+        - RUN yum install -y initscripts
+
+suites:
+  - name: repository # install from repository
+    run_list:
+      - recipe[elasticsearch_test::default_with_plugins]
+    attributes:
+      elasticsearch:
+        install:
+          type: repository
+
+  - name: tarball # install by tarball
+    run_list:
+      - recipe[elasticsearch_test::default_with_plugins]
+    attributes:
+      elasticsearch:
+        install:
+          type: tarball
+
+  - name: package # install from package directly
+    run_list:
+      - recipe[java]
+      - recipe[elasticsearch_test::default_with_plugins]
+    attributes:
+      elasticsearch:
+        install:
+          type: package
+
+  - name: doubleinstance
+    run_list:
+      - recipe[elasticsearch_test::doubleinstances]
+
+  - name: override_package # the override-everything use case
+    run_list:
+      - recipe[elasticsearch_test::package]
+
+  - name: override_tarball # the override-everything use case
+    run_list:
+      - recipe[elasticsearch_test::tarball]
