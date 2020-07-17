@@ -74,7 +74,7 @@ class ElasticsearchCookbook::ServiceProvider < Chef::Provider::LWRPBase
           install_type: es_install.type,
           version: es_install.version
         )
-        only_if 'which systemctl'
+        only_if { node['init_package'] == 'systemd' }
         action :nothing
       end
       systemd_r.run_action(:create)
@@ -85,7 +85,7 @@ class ElasticsearchCookbook::ServiceProvider < Chef::Provider::LWRPBase
         reload_r = execute "reload-systemd-#{new_resource.service_name}" do
           command 'systemctl daemon-reload'
           action :nothing
-          only_if 'which systemctl'
+          only_if { node['init_package'] == 'systemd' }
         end
         reload_r.run_action(:run)
       end
