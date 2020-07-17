@@ -1,10 +1,8 @@
+dist: bionic
+
 language: ruby
 
-branches:
-  only:
-    - master
-
-sudo: false
+sudo: true
 
 rvm:
   - 2.5.7
@@ -23,10 +21,56 @@ cache:
   directories:
     - vendor/bundle
 
+services: docker
+
+# You can regerate this with kitchen list -b | awk '{print "- INSTANCE="$0}'
+env:
+  matrix:
+    - INSTANCE=repository-ubuntu-1804
+    - INSTANCE=repository-ubuntu-1604
+    - INSTANCE=repository-ubuntu-1404
+    - INSTANCE=repository-centos-8
+    - INSTANCE=repository-centos-7
+    - INSTANCE=repository-centos-6
+    - INSTANCE=tarball-ubuntu-1804
+    - INSTANCE=tarball-ubuntu-1604
+    - INSTANCE=tarball-ubuntu-1404
+    - INSTANCE=tarball-centos-8
+    - INSTANCE=tarball-centos-7
+    - INSTANCE=tarball-centos-6
+    - INSTANCE=package-ubuntu-1804
+    - INSTANCE=package-ubuntu-1604
+    - INSTANCE=package-ubuntu-1404
+    - INSTANCE=package-centos-8
+    - INSTANCE=package-centos-7
+    - INSTANCE=package-centos-6
+    - INSTANCE=doubleinstance-ubuntu-1804
+    - INSTANCE=doubleinstance-ubuntu-1604
+    - INSTANCE=doubleinstance-ubuntu-1404
+    - INSTANCE=doubleinstance-centos-8
+    - INSTANCE=doubleinstance-centos-7
+    - INSTANCE=doubleinstance-centos-6
+    - INSTANCE=override-package-ubuntu-1804
+    - INSTANCE=override-package-ubuntu-1604
+    - INSTANCE=override-package-ubuntu-1404
+    - INSTANCE=override-package-centos-8
+    - INSTANCE=override-package-centos-7
+    - INSTANCE=override-package-centos-6
+    - INSTANCE=override-tarball-ubuntu-1804
+    - INSTANCE=override-tarball-ubuntu-1604
+    - INSTANCE=override-tarball-ubuntu-1404
+    - INSTANCE=override-tarball-centos-8
+    - INSTANCE=override-tarball-centos-7
+    - INSTANCE=override-tarball-centos-6
+
 script:
-  - bundle exec rake style
-  - bundle exec rake spec
-  - KITCHEN_LOCAL_YAML=.kitchen.dokken.yml bundle exec kitchen verify
+  - KITCHEN_LOCAL_YAML=.kitchen.dokken.yml bundle exec kitchen verify ${INSTANCE}
+
+matrix:
+  include:
+    script:
+      - bundle exec rake style
+      - bundle exec rake spec
 
 notifications:
   disable: true
