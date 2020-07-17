@@ -9,7 +9,7 @@
 # cookbook (unlike install, configure, and service, which we do ship in the
 # default cookbook).
 
-include_recipe 'chef-sugar'
+include_recipe 'chef-sugar' unless Chef::Sugar::VERSION.to_i >= 4
 
 # see README.md
 include_recipe 'elasticsearch::default'

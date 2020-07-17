@@ -4,7 +4,7 @@
 # Recipe:: default
 #
 
-include_recipe 'chef-sugar'
+include_recipe 'chef-sugar' unless Chef::Sugar::VERSION.to_i >= 4
 
 # see README.md and test/fixtures/cookbooks for more examples!
 elasticsearch_user 'elasticsearch' do
